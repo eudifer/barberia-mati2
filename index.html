@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>BarberBook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ======= HOME ======= -->
+<div id="screen-home" class="screen">
+  <nav class="top-nav">
+    <div class="nav-logo">Barber<span>Book</span></div>
+    <div class="nav-actions" id="nav-actions-home"></div>
+  </nav>
+  <div class="main">
+    <div class="hero">
+      <div class="section-eyebrow">Agenda tu corte</div>
+      <h1>Tu barbería,<br>a tu tiempo.</h1>
+      <p class="hero-subtitle">Elige tu barbero favorito y reserva el horario que más te acomode.</p>
+    </div>
+    <h3 style="margin-bottom:4px">Nuestros Barberos</h3>
+    <p style="font-size:13px;color:var(--fg-3);margin-bottom:0">Selecciona un barbero para ver disponibilidad y agendar</p>
+    <div class="barbers-grid" id="barbers-grid"></div>
+  </div>
+</div>
+
+<!-- ======= BOOKING ======= -->
+<div id="screen-booking" class="screen">
+  <nav class="top-nav">
+    <div class="nav-logo">Barber<span>Book</span></div>
+    <div class="nav-actions" id="nav-actions-booking"></div>
+  </nav>
+  <div class="main">
+    <button class="back-btn" onclick="showScreen('home')">← Volver</button>
+    <div id="booking-barber-header" style="margin-bottom:24px"></div>
+    <div class="booking-layout">
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="calendar-header">
+            <button class="btn btn-ghost btn-icon" id="cal-prev" onclick="calNav(-1)">‹</button>
+            <span id="cal-month-label" style="font-weight:600;font-size:15px"></span>
+            <button class="btn btn-ghost btn-icon" id="cal-next" onclick="calNav(1)">›</button>
+          </div>
+          <div class="calendar-grid" id="cal-labels"></div>
+          <div class="calendar-grid" id="cal-grid"></div>
+        </div>
+        <div class="card" id="slots-container" style="display:none">
+          <div class="slots-title" id="slots-date-label"></div>
+          <div class="slots-grid" id="slots-grid"></div>
+        </div>
+      </div>
+      <div>
+        <div class="booking-summary">
+          <h3 style="margin-bottom:16px">Tu reserva</h3>
+          <div class="summary-row"><span class="summary-label">Barbero</span><span class="summary-value" id="s-barber">—</span></div>
+          <div class="summary-row"><span class="summary-label">Fecha</span><span class="summary-value" id="s-date">—</span></div>
+          <div class="summary-row"><span class="summary-label">Hora</span><span class="summary-value" id="s-time">—</span></div>
+          <div style="margin-top:16px">
+            <button class="btn btn-primary btn-lg" style="width:100%" id="btn-confirm-booking" onclick="openConfirmModal()" disabled>Confirmar reserva</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= CLIENTE ======= -->
+<div id="screen-client" class="screen">
+  <nav class="top-nav">
+    <div class="nav-logo">Barber<span>Book</span></div>
+    <div class="nav-actions" id="nav-actions-client"></div>
+  </nav>
+  <div class="main">
+    <div style="margin-bottom:24px">
+      <div class="section-eyebrow">Mi cuenta</div>
+      <h2 id="client-welcome"></h2>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="clientTab('upcoming')">Próximas citas</button>
+      <button class="tab" onclick="clientTab('past')">Historial</button>
+    </div>
+    <div id="client-appointments"></div>
+    <div style="margin-top:24px">
+      <button class="btn btn-outline" onclick="showScreen('home')">+ Nueva reserva</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= BARBERO ======= -->
+<div id="screen-barber" class="screen">
+  <nav class="top-nav">
+    <div class="nav-logo">Barber<span>Book</span></div>
+    <div class="nav-actions" id="nav-actions-barber"></div>
+  </nav>
+  <div class="main main-wide">
+    <div style="margin-bottom:24px">
+      <div class="section-eyebrow">Panel de Barbero</div>
+      <h2 id="barber-welcome"></h2>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="barberTab('agenda')">Mi agenda</button>
+      <button class="tab" onclick="barberTab('schedule')">Disponibilidad</button>
+      <button class="tab" onclick="barberTab('overrides')">Días especiales</button>
+    </div>
+    <div id="barber-panel-content"></div>
+  </div>
+</div>
+
+<!-- ======= MODALES ======= -->
+
+<!-- Login -->
+<div id="modal-login" class="modal-backdrop" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Iniciar sesión</div>
+    <div class="tabs">
+      <button class="tab active" onclick="loginTab('client')">Cliente</button>
+      <button class="tab" onclick="loginTab('barber')">Barbero</button>
+    </div>
+    <div id="login-form-client">
+      <div class="form-group">
+        <label class="form-label">Nombre</label>
+        <input class="form-input" id="lc-name" placeholder="Tu nombre" type="text">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input class="form-input" id="lc-email" placeholder="tu@email.com" type="email">
+      </div>
+    </div>
+    <div id="login-form-barber" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Correo del barbero</label>
+        <input class="form-input" id="lb-email" placeholder="correo@gmail.com" type="email">
+      </div>
+      <p style="font-size:12px;color:var(--fg-3);margin-top:-8px">Solo los correos registrados como barbero pueden acceder aquí.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-login')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmar reserva -->
+<div id="modal-confirm" class="modal-backdrop" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Confirmar reserva</div>
+    <div id="confirm-summary" style="margin-bottom:16px"></div>
+    <div id="confirm-client-fields" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Tu nombre</label>
+        <input class="form-input" id="guest-name" placeholder="Nombre">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tu correo</label>
+        <input class="form-input" id="guest-email" placeholder="tu@email.com" type="email">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doBook()">Reservar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Día especial -->
+<div id="modal-override" class="modal-backdrop" style="display:none">
+  <div class="modal">
+    <div class="modal-title">Marcar día especial</div>
+    <div class="form-group">
+      <label class="form-label">Fecha</label>
+      <input class="form-input" id="ov-date" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Estado</label>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+          <input type="radio" name="ov-status" value="unavailable" checked> 🔴 No disponible ese día
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+          <input type="radio" name="ov-status" value="available"> 🟢 Disponible (día extra)
+        </label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-override')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doAddOverride()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
